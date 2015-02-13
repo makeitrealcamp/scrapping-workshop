@@ -16,38 +16,73 @@ require 'open-uri'
 
   properties.each_with_index do |propertie, index|
     puts "--------------Propiedad #: #{index+1}-----------------"
+    propertie_site = propertie.at_css('div.propertyInfo>a:nth-child(3)').attr('href')
     # MERCADO
-    puts "Mercado: #{propertie.at_css('.offer').text.strip}"
+    puts "1. Mercado: #{propertie.at_css('.offer').text.strip}"
     # TIPO
-    puts "Tipo: #{propertie.at_css('.propertyInfo>a:nth-child(3) h2 span').text.strip}"
-    # puts "Tipo: #{propertie.css('.itemOffered').text.strip}"
+    puts "2. Tipo: #{propertie.at_css('.propertyInfo>a:nth-child(3) h2 span').text.strip}"
+    # CONDICION
+    puts "3. !!!FALTA - Condición: "
+
+
+    # FECHA
+    puts "4. !!!FALTA - Fecha: "
+
+
+    # ESTRATO
+    puts "5. Estrato: #{propertie_site.split('estrato-')[1][0]}"
+
+    # DEPARTAMENTO
+    puts "6. !!!FALTA - Departamento: "
+
+    #CIUDAD
+    city = propertie_site.split('en-')[1].split('-')[0].to_s
+    puts "7. Ciudad: #{city.capitalize}"
+
+    #BARRIO
+    barrio = propertie.at_css('.propertyInfo>a:nth-child(3) h2 span:nth-child(3)').text.strip
+    puts "8. Barrio: #{barrio.split(',')[1].strip}"
+
+    # AREA CONSTRUIDA
+    area = propertie_site.split('-area-')[1].split('-')[0].to_i
+    puts "9. Area Construida: #{area} mts2"
+
+    # VALOR PROPIEDAD
+    value = propertie.at_css('.propertyInfo>a:nth-child(3) dd i').text.strip.tr('$,.','').to_i
+    puts "10. Valor Propiedad: #{value} Pesos"
+
+    # VALOR METRO CUADRADO
+    if area === 0
+      puts "11. Valor metro cuadrado: No disponible"
+    else
+      value_mt2 = value/area
+      puts "12. Valor metro cuadrado: #{value_mt2} Pesos"
+    end    
+
+    # NUMERO DE HABITACIONES
+    habitaciones = propertie_site.split('-habitaciones')[0].slice(-1).to_i
+    puts "13. Numero de Habitaciones: #{habitaciones} habitaciones"
+
+    # CODIGO DE PROPIEDAD
+    id_web = propertie_site.split('-id-')[1]
+    puts "14. Codigo de propiedad: #{id_web}"
+
+    # DIAS DE ROTACION
+    puts "15. !!!FALTA - Dias de rotación: "
 
     # SITIO WEB DE PROPIEDAD
-    propertie_site = propertie.at_css('div.propertyInfo>a:nth-child(3)').attr('href')
-    puts "Sitio Web de la propiedad: #{propertie_site}"
-    # propertie_site = propertie.at_css('div.propertyInfo.item a').attr('href')
-    # puts "#{propertie}"
+    puts "16. Sitio Web de la propiedad: #{propertie_site}"
     puts ""
   end
 
 
 
 
-
-  # Getting the Meta
-  # puts doc.at('meta[@name="keywords"]')[:content]
-  # puts ""
-
-  # 
-  # puts "Condición"
-  # puts "Fecha"
   # puts "Estrato: #{info.at_css("ul li:nth-child(4)").text.strip}"
   # puts "Departamento"
-  # puts "Ciudad"
   # puts "Barrio: #{info.at_css("ul li:first-child strong").text.strip}"
   # puts "Area Construida: #{info.at_css("ul li:nth-child(5)").text.strip}"
-  # puts "Valor Propiedad: #{info.at_css("ul li:nth-child(3) strong").text.strip}"
-  # # puts "Valor M2"
+  # puts "Valor M2"
   # puts "Numero de habitaciones: #{info.at_css("ul li:nth-child(6)").text.strip}"
   # puts "Código de la propiedad: #{data.at_css("#idInmuebleH1")['value']}"
   # # puts "Dias de rotacion"
