@@ -1,20 +1,19 @@
-require 'nokogiri'
-require 'open-uri'
-require 'rubygems'
 require 'capybara'
-require 'capybara/poltergeist'
+require 'nokogiri'
+require 'capybara-webkit'
+require 'selenium-webdriver'
 
-include Capybara::DSL
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, js_errors: false)
-end
-Capybara.default_driver = :poltergeist
-# Capybara.javascript_driver = :poltergeist
-Capybara.javascript_driver = :poltergeist_debug
+Capybara.current_driver = :selenium
+Capybara.app_host = 'http://www.metrocuadrado.com'
+Capybara.run_server = false
 Capybara.default_wait_time = 5
+Capybara.default_driver = :webkit
+# Capybara.javascript_driver = :webkit
+
+browser = Capybara.current_session
 
 # Open the site
-visit "http://www.metrocuadrado.com/web/buscar/medellin"
+browser.visit('/web/buscar/medellin')
 # Define the source for all the properties
 source = "Metro Cuadrado"
 # Count all the scraped properties
@@ -84,6 +83,9 @@ page = Capybara.current_session
     if page.has_link?('Siguiente',:href => 'javascript:void(0);') # As long as there is still a nextpage link...
       puts "Cargando Siguiente Pagina"
       page.click_link('Siguiente',:href => 'javascript:void(0);')
+      Timeout.timeout(Capybara.default_wait_time) do
+      	loop until page.evaluate_script('jQuery.active').zero?
+    	end
     else # If no link left, then break out of loop
       break
     end
